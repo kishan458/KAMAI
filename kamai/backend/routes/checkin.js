@@ -5,10 +5,10 @@ const supabase = require('../lib/supabase')
 // POST /checkin
 // Rider checks in at a darkstore
 router.post('/', async (req, res) => {
-  const { riderAnonId, darkstoreId, platform } = req.body
+  const { rider_anon_id: riderAnonId, darkstore_id: darkstoreId, platform } = req.body
 
   if (!riderAnonId || !darkstoreId || !platform) {
-    return res.status(400).json({ error: 'riderAnonId, darkstoreId, platform required' })
+    return res.status(400).json({ error: 'rider_anon_id, darkstore_id, platform required' })
   }
 
   try {
@@ -45,10 +45,10 @@ router.post('/', async (req, res) => {
 // POST /checkin/ping
 // Keep checkin alive — call every 2 minutes from app
 router.post('/ping', async (req, res) => {
-  const { riderAnonId } = req.body
+  const { rider_anon_id: riderAnonId } = req.body
 
   if (!riderAnonId) {
-    return res.status(400).json({ error: 'riderAnonId required' })
+    return res.status(400).json({ error: 'rider_anon_id required' })
   }
 
   try {
@@ -70,10 +70,10 @@ router.post('/ping', async (req, res) => {
 // POST /checkin/leave
 // Rider checks out
 router.post('/leave', async (req, res) => {
-  const { riderAnonId } = req.body
+  const { rider_anon_id: riderAnonId } = req.body
 
   if (!riderAnonId) {
-    return res.status(400).json({ error: 'riderAnonId required' })
+    return res.status(400).json({ error: 'rider_anon_id required' })
   }
 
   try {

@@ -99,7 +99,7 @@ setInterval(expireStaleCheckins, 5 * 60 * 1000)
 
 // ── Start ──
 const PORT = process.env.PORT || 3001
-httpServer.listen(PORT, () => {
-  console.log(`Kamai backend running on port ${PORT}`)
+httpServer.listen(PORT, '0.0.0.0', () => {
+  console.log(`Kamai backend running on http://0.0.0.0:${PORT}`)
   console.log(`Health check: http://localhost:${PORT}/health`)
 })

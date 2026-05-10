@@ -2,14 +2,15 @@ const express = require('express')
 const router = express.Router()
 const supabase = require('../lib/supabase')
 
+const BASELINE_RIDERS = 8
+
 // GET /darkstores
-// Returns all darkstores with live rider counts + scarcity scores
+// Returns all darkstores with extracted lat/lng + live rider counts + scarcity scores
 router.get('/', async (req, res) => {
   try {
-    // Get all darkstores
+    // Use RPC function to get darkstores with extracted PostGIS coordinates
     const { data: darkstores, error: dsError } = await supabase
-      .from('darkstores')
-      .select('*')
+      .rpc('get_darkstores_with_coords')
 
     if (dsError) throw dsError
 
@@ -23,13 +24,11 @@ router.get('/', async (req, res) => {
 
     if (ciError) throw ciError
 
-    // Count riders per darkstore
+    // Count active riders per darkstore
     const riderCounts = {}
     checkins.forEach(c => {
       riderCounts[c.darkstore_id] = (riderCounts[c.darkstore_id] || 0) + 1
     })
-
-    const BASELINE_RIDERS = 8
 
     // Attach scarcity scores to each darkstore
     const result = darkstores.map(store => {
@@ -41,7 +40,14 @@ router.get('/', async (req, res) => {
       else if (scarcityScore >= 2) opportunity = 'WARM'
 
       return {
-        ...store,
+        id: store.id,
+        name: store.name,
+        platform: store.platform,
+        area: store.area,
+        city: store.city,
+        address: store.address,
+        latitude: store.latitude,   // ✓ real number from PostGIS ST_Y()
+        longitude: store.longitude, // ✓ real number from PostGIS ST_X()
         activeRiders,
         scarcityScore,
         opportunity,

@@ -15,6 +15,9 @@ const io = new Server(httpServer, {
 app.use(cors())
 app.use(express.json())
 
+const authRoutes = require('./routes/auth')
+app.use('/auth', authRoutes)
+
 // ── Routes ──
 app.use('/darkstores', require('./routes/darkstores'))
 app.use('/checkin', require('./routes/checkin'))

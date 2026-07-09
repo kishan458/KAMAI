@@ -5,9 +5,9 @@
 A crowdsourced real-time earnings transparency and spatial allocation system for quick-commerce delivery riders in India (Zepto, Blinkit, Swiggy Instamart).
 
 <p>
-  <img src="image1.png" alt="BTC Macro Event Engine Dashboard" width="100%">
-  <img src="image2.png" alt="BTC Macro Event Engine Dashboard" width="100%">
-  <img src="image3.png" alt="BTC Macro Event Engine Dashboard" width="100%">
+  <img src="screenshots/image1.png" alt="BTC Macro Event Engine Dashboard" width="100%">
+  <img src="screenshots/image2.png" alt="BTC Macro Event Engine Dashboard" width="100%">
+  <img src="screenshots/image3.png" alt="BTC Macro Event Engine Dashboard" width="100%">
 </p>
 
 ## Overview

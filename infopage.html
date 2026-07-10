@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kamai — Har order ka hisaab</title>
+<meta name="description" content="Kamai shows Zepto, Blinkit and Swiggy Instamart riders exactly what they take home, and where scarcity is right now. Every number cited. Nothing invented.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0C0B;
+    --surface:#151714;
+    --surface-2:#121412;
+    --border:#242722;
+    --border-soft:#1b1d1a;
+    --green:#12D896;
+    --green-dim:#0a8f66;
+    --green-deep:#062e22;
+    --red:#F0544A;
+    --amber:#F5A623;
+    --text:#F6F7F4;
+    --text-secondary:#9CA39A;
+    --text-muted:#5f665e;
+    --zepto:#A78BFA;
+    --blinkit:#F5A623;
+    --instamart:#FB7A3C;
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Inter', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      radial-gradient(1200px 700px at 15% -10%, rgba(18,216,150,0.06), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--body);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+  ::selection{background:var(--green);color:#04140f;}
+  button{font-family:inherit;}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
+  @media(max-width:640px){.wrap{padding:0 20px;}}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 32px;
+    background:linear-gradient(to bottom, rgba(11,12,11,0.92), rgba(11,12,11,0));
+    backdrop-filter:blur(6px);
+  }
+  @media(max-width:640px){nav{padding:14px 20px;}}
+  .logo{
+    display:flex;align-items:center;gap:9px;
+    font-family:var(--display);font-weight:700;font-size:1.25rem;letter-spacing:0.01em;
+  }
+  .logo .mark{
+    width:29px;height:29px;border-radius:8px;
+    background:linear-gradient(135deg, var(--green), var(--green-dim));
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-weight:600;font-size:0.98rem;color:#04140f;
+  }
+  .nav-right{display:flex;align-items:center;gap:14px;}
+  .nav-status{
+    display:flex;align-items:center;gap:7px;
+    font-family:var(--mono);font-size:0.68rem;letter-spacing:0.04em;color:var(--text-muted);
+    border:1px solid var(--border);padding:6px 12px;border-radius:100px;
+  }
+  .nav-status::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 3px rgba(245,166,35,0.15);animation:pulse 1.8s infinite;}
+  @media(max-width:560px){.nav-status{display:none;}}
+  .nav-cta{
+    font-family:var(--body);font-weight:600;font-size:0.86rem;
+    background:var(--green);color:#04140f;
+    padding:10px 19px;border-radius:100px;
+    transition:transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(18,216,150,0.25);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex;flex-direction:column;justify-content:center;
+    padding:150px 0 80px;
+    position:relative;
+  }
+  .hero-bg-grid{
+    position:absolute;inset:0;z-index:0;pointer-events:none;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size:56px 56px;
+    mask-image:radial-gradient(ellipse 70% 60% at 50% 30%, black 20%, transparent 75%);
+  }
+  .hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1.08fr 0.92fr;gap:60px;align-items:center;}
+  @media(max-width:900px){.hero-inner{grid-template-columns:1fr;gap:52px;}}
+
+  .eyebrow{
+    font-family:var(--mono);font-size:0.76rem;letter-spacing:0.08em;
+    color:var(--green);text-transform:uppercase;
+    display:flex;align-items:center;gap:8px;margin-bottom:22px;
+  }
+  .eyebrow::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(18,216,150,0.15);}
+
+  h1{
+    font-family:var(--display);font-weight:700;
+    font-size:clamp(2.5rem, 5.2vw, 4.3rem);
+    line-height:1.03;letter-spacing:-0.02em;
+    margin-bottom:22px;
+  }
+  h1 .hi{color:var(--green);}
+  h1 .devanagari{
+    font-weight:400;font-style:normal;color:var(--text-muted);
+    font-size:0.42em;display:block;margin-top:10px;letter-spacing:0.01em;
+  }
+
+  .hero-sub{
+    font-size:1.08rem;line-height:1.62;color:var(--text-secondary);
+    max-width:480px;margin-bottom:32px;
+  }
+  .hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:40px;}
+  .btn-primary{
+    background:var(--green);color:#04140f;font-weight:600;font-size:0.95rem;
+    padding:15px 28px;border-radius:100px;border:none;cursor:pointer;
+    transition:transform 0.15s ease, box-shadow 0.15s ease;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(18,216,150,0.3);}
+  .btn-secondary{
+    border:1px solid var(--border);color:var(--text);font-weight:600;font-size:0.95rem;
+    padding:15px 28px;border-radius:100px;
+    transition:border-color 0.15s ease, background 0.15s ease;
+  }
+  .btn-secondary:hover{border-color:#3a3d38;background:var(--surface);}
+
+  .hero-stats{display:flex;gap:30px;flex-wrap:wrap;}
+  .hero-stat b{
+    display:block;font-family:var(--mono);font-size:1.45rem;font-weight:600;color:var(--text);
+  }
+  .hero-stat span{font-size:0.78rem;color:var(--text-muted);}
+
+  /* ---------- LEDGER (signature element) ---------- */
+  .ledger-wrap{position:relative;}
+  .ledger{
+    background:var(--surface);border:1px solid var(--border);border-radius:20px;
+    padding:26px 26px 0;position:relative;overflow:hidden;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,0.7);
+  }
+  .ledger::before{
+    content:'';position:absolute;top:-40%;right:-30%;width:70%;height:140%;
+    background:radial-gradient(circle, rgba(18,216,150,0.09), transparent 70%);
+    pointer-events:none;
+  }
+  .ledger-head{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:18px;padding-bottom:16px;border-bottom:1px dashed var(--border);
+  }
+  .ledger-head span{font-family:var(--mono);font-size:0.72rem;color:var(--text-muted);letter-spacing:0.05em;text-transform:uppercase;}
+  .ledger-head .live{
+    display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:0.7rem;color:var(--green);
+  }
+  .ledger-head .live::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.6s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+  .ledger-row{
+    display:flex;justify-content:space-between;align-items:baseline;
+    padding:9px 0;font-size:0.88rem;color:var(--text-secondary);
+    opacity:0;transform:translateY(6px);
+    transition:opacity 0.45s ease, transform 0.45s ease;
+  }
+  .ledger-row.show{opacity:1;transform:translateY(0);}
+  .ledger-row .amt{font-family:var(--mono);color:var(--text);font-size:0.92rem;}
+  .ledger-row.neg .amt{color:var(--red);}
+  .ledger-row.total{
+    border-top:1px solid var(--border);margin-top:8px;padding-top:16px;
+  }
+  .ledger-row.total span:first-child{color:var(--text);font-weight:600;font-size:0.95rem;}
+  .ledger-row.total .amt{color:var(--green);font-size:1.55rem;font-weight:600;}
+  .ledger-foot{
+    margin-top:14px;padding:14px 0;border-top:1px dashed var(--border);
+    font-family:var(--mono);font-size:0.7rem;color:var(--text-muted);display:flex;justify-content:space-between;
+  }
+  .ledger-foot b{color:var(--amber);}
+  .ledger-stub{
+    height:16px;
+    background-image:radial-gradient(circle at 8px 0, transparent 8px, var(--bg) 8.5px);
+    background-size:16px 16px;background-position:-4px 0;background-repeat:repeat-x;
+  }
+
+  /* ---------- SECTION SHARED ---------- */
+  section{padding:112px 0;position:relative;}
+  @media(max-width:640px){section{padding:72px 0;}}
+  .section-head{max-width:640px;margin-bottom:56px;}
+  .section-head .eyebrow{margin-bottom:16px;}
+  h2{
+    font-family:var(--display);font-weight:700;font-size:clamp(1.85rem, 3.3vw, 2.6rem);
+    line-height:1.14;letter-spacing:-0.015em;margin-bottom:16px;
+  }
+  .section-head p{font-size:1.01rem;color:var(--text-secondary);line-height:1.65;max-width:520px;}
+
+  /* ---------- PROBLEM STATS ---------- */
+  .problem{background:var(--surface-2);border-top:1px solid var(--border-soft);border-bottom:1px solid var(--border-soft);}
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+  @media(max-width:760px){.stat-grid{grid-template-columns:1fr;}}
+  .stat-cell{background:var(--surface-2);padding:34px 30px;}
+  .stat-cell b{
+    display:block;font-family:var(--mono);font-weight:600;font-size:2.3rem;color:var(--red);margin-bottom:10px;line-height:1;
+  }
+  .stat-cell p{font-size:0.9rem;color:var(--text-secondary);line-height:1.55;}
+  .cite{
+    margin-top:32px;font-family:var(--mono);font-size:0.74rem;color:var(--text-muted);
+    display:flex;align-items:flex-start;gap:8px;line-height:1.6;
+  }
+  .cite::before{content:'⌐';color:var(--green);flex-shrink:0;}
+
+  /* ---------- FEATURE ROWS ---------- */
+  .feature{display:grid;grid-template-columns:0.85fr 1.15fr;gap:70px;align-items:center;}
+  .feature.reverse{grid-template-columns:1.15fr 0.85fr;}
+  .feature.reverse .feature-text{order:2;}
+  .feature.reverse .feature-phone{order:1;}
+  @media(max-width:900px){
+    .feature, .feature.reverse{grid-template-columns:1fr;gap:44px;}
+    .feature.reverse .feature-text{order:1;}
+    .feature.reverse .feature-phone{order:2;}
+  }
+  .feature + .feature{margin-top:120px;}
+  @media(max-width:640px){.feature + .feature{margin-top:76px;}}
+
+  .feature-tag{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:0.71rem;letter-spacing:0.06em;text-transform:uppercase;
+    color:var(--text-muted);border:1px solid var(--border);padding:6px 12px;border-radius:100px;margin-bottom:20px;
+  }
+  .feature-tag .dot{width:6px;height:6px;border-radius:50%;}
+  h3{font-family:var(--display);font-weight:700;font-size:1.65rem;margin-bottom:14px;letter-spacing:-0.01em;}
+  .feature-text p{color:var(--text-secondary);line-height:1.7;font-size:0.97rem;margin-bottom:22px;}
+  .feature-points{list-style:none;}
+  .feature-points li{
+    display:flex;gap:12px;padding:11px 0;border-top:1px solid var(--border-soft);
+    font-size:0.9rem;color:var(--text-secondary);
+  }
+  .feature-points li:first-child{border-top:none;}
+  .feature-points li .ic{color:var(--green);font-family:var(--mono);flex-shrink:0;}
+  .feature-badge{
+    display:inline-flex;align-items:center;gap:6px;margin-top:6px;
+    background:var(--green-deep);color:var(--green);border:1px solid rgba(18,216,150,0.25);
+    font-family:var(--mono);font-size:0.68rem;padding:5px 11px;border-radius:100px;
+  }
+
+  /* real device mockup */
+  .feature-phone{display:flex;justify-content:center;}
+  .device{
+    width:252px;background:linear-gradient(160deg,#232522,#0c0d0b);
+    border-radius:40px;padding:10px;
+    box-shadow:0 45px 90px -30px rgba(0,0,0,0.75), 0 0 0 1px #2c2e29, inset 0 0 0 1px rgba(255,255,255,0.03);
+    position:relative;
+  }
+  .device-screen{
+    background:#000;border-radius:31px;overflow:hidden;
+    aspect-ratio:9/19.5;position:relative;
+  }
+  .device-screen img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block;}
+  .device-island{
+    position:absolute;top:9px;left:50%;transform:translateX(-50%);
+    width:74px;height:20px;background:#000;border-radius:100px;z-index:5;
+    box-shadow:0 0 0 1px rgba(255,255,255,0.04);
+  }
+  .device-glow{
+    position:absolute;inset:-40px;z-index:-1;filter:blur(50px);
+    background:radial-gradient(circle at 50% 30%, var(--glow, var(--green)), transparent 65%);
+    animation:glowBreathe 5s ease-in-out infinite;
+  }
+  @keyframes glowBreathe{
+    0%, 100%{opacity:0.18;}
+    50%{opacity:0.48;}
+  }
+
+  /* ---------- ALGORITHM STRIP ---------- */
+  .algo-strip{background:var(--surface-2);border-top:1px solid var(--border-soft);border-bottom:1px solid var(--border-soft);}
+  .algo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  @media(max-width:820px){.algo-grid{grid-template-columns:1fr;}}
+  .algo-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;}
+  .algo-num{font-family:var(--mono);font-size:0.75rem;color:var(--text-muted);margin-bottom:14px;}
+  .algo-card h4{font-family:var(--display);font-size:1.08rem;font-weight:600;margin-bottom:10px;}
+  .algo-card p{font-size:0.86rem;color:var(--text-secondary);line-height:1.6;}
+  .algo-code{
+    margin-top:16px;background:var(--bg);border:1px solid var(--border-soft);border-radius:10px;
+    padding:12px 14px;font-family:var(--mono);font-size:0.69rem;color:var(--green);line-height:1.7;overflow-x:auto;white-space:pre;
+  }
+
+  /* ---------- SCREENSHOT STRIP (auto slideshow) ---------- */
+  .screens-scroll{
+    overflow:hidden;
+    padding:8px 0 24px;
+    position:relative;
+    -webkit-mask-image:linear-gradient(to right, transparent 0, black 48px, black calc(100% - 48px), transparent 100%);
+    mask-image:linear-gradient(to right, transparent 0, black 48px, black calc(100% - 48px), transparent 100%);
+  }
+  .screens-track{
+    display:flex;
+    gap:36px;
+    width:max-content;
+    animation:screensMarquee 42s linear infinite;
+  }
+  .screens-scroll:hover .screens-track,
+  .screens-track.paused{
+    animation-play-state:paused;
+  }
+  @keyframes screensMarquee{
+    0%{transform:translateX(0);}
+    100%{transform:translateX(-50%);}
+  }
+  .screen-card{
+    flex:0 0 auto;width:230px;
+  }
+  .screen-card .frame{
+    border-radius:24px;overflow:hidden;border:1px solid var(--border);
+    aspect-ratio:9/19.5;background:#000;
+    box-shadow:0 24px 48px -18px rgba(0,0,0,0.65);
+  }
+  .screen-card img{width:100%;height:100%;object-fit:cover;object-position:top center;}
+  .screen-card .cap{font-family:var(--mono);font-size:0.72rem;color:var(--text-muted);margin-top:12px;text-align:center;}
+
+  @media(prefers-reduced-motion: reduce){
+    .screens-track{animation:none;}
+    .device-glow{animation:none;opacity:0.35;}
+  }
+
+  /* ---------- PRIVACY ---------- */
+  .privacy-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+  @media(max-width:760px){.privacy-grid{grid-template-columns:1fr;}}
+  .privacy-cell{background:var(--surface);padding:26px 28px;display:flex;gap:16px;}
+  .privacy-cell .num{font-family:var(--mono);color:var(--green);font-weight:600;font-size:1rem;flex-shrink:0;}
+  .privacy-cell p{font-size:0.92rem;color:var(--text-secondary);line-height:1.6;}
+  .privacy-cell b{color:var(--text);font-weight:600;}
+
+  /* ---------- CTA ---------- */
+  .cta-section{text-align:center;padding:130px 0;position:relative;}
+  .cta-section::before{
+    content:'';position:absolute;inset:0;z-index:0;
+    background:radial-gradient(ellipse 60% 50% at 50% 40%, rgba(18,216,150,0.1), transparent 70%);
+    pointer-events:none;
+  }
+  .cta-inner{position:relative;z-index:1;max-width:640px;margin:0 auto;}
+  .cta-section h2{font-size:clamp(1.9rem,4.2vw,3.1rem);margin-bottom:18px;}
+  .cta-section p{color:var(--text-secondary);font-size:1.03rem;margin-bottom:36px;line-height:1.6;}
+  .cta-form{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;max-width:440px;margin:0 auto;}
+  .cta-form input{
+    flex:1;min-width:220px;background:var(--surface);border:1px solid var(--border);
+    padding:15px 18px;border-radius:100px;color:var(--text);font-family:var(--body);font-size:0.95rem;
+  }
+  .cta-form input:focus{outline:none;border-color:var(--green);}
+  .cta-note{margin-top:16px;font-size:0.8rem;color:var(--text-muted);}
+  .cta-error{margin-top:16px;font-size:0.8rem;color:var(--red);display:none;}
+
+  /* ---------- FOOTER ---------- */
+  footer{border-top:1px solid var(--border-soft);padding:56px 0 34px;}
+  .footer-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:40px;margin-bottom:44px;}
+  .footer-brand .logo{margin-bottom:14px;}
+  .footer-brand p{color:var(--text-muted);font-size:0.85rem;max-width:280px;line-height:1.6;}
+  .footer-cols{display:flex;gap:60px;flex-wrap:wrap;}
+  .footer-col span{display:block;font-family:var(--mono);font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:14px;}
+  .footer-col a{display:block;color:var(--text-secondary);font-size:0.88rem;margin-bottom:11px;transition:color 0.15s;}
+  .footer-col a:hover{color:var(--text);}
+  .footer-bottom{
+    padding-top:26px;border-top:1px solid var(--border-soft);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+    font-size:0.78rem;color:var(--text-muted);
+  }
+
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity 0.7s ease, transform 0.7s ease;}
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1;transform:none;transition:none;}
+    .ledger-row{opacity:1;transform:none;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><span class="mark">₹</span>KAMAI</div>
+  <div class="nav-right">
+    <span class="nav-status">in development · Bengaluru pilot</span>
+    <a href="#access" class="nav-cta">Get early access</a>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="hero-bg-grid"></div>
+  <div class="wrap hero-inner">
+    <div>
+      <div class="eyebrow">Built for Zepto · Blinkit · Instamart riders</div>
+      <h1>Har order ka <span class="hi">hisaab.</span></h1>
+      <p class="hero-sub">The platform tells you what you earned. Kamai tells you what you actually kept — and where to go right now to earn more. Every number cited. Nothing invented.</p>
+      <div class="hero-actions">
+        <a href="#access" class="btn-primary">Get early access →</a>
+        <a href="#calculate" class="btn-secondary">See how it works</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><b>0 / 3</b><span>platforms proven to pay minimum wage</span></div>
+        <div class="hero-stat"><b>₹40–80k</b><span>lost yearly to not knowing your numbers</span></div>
+        <div class="hero-stat"><b>3</b><span>original algorithms, zero fake data</span></div>
+      </div>
+    </div>
+
+    <div class="ledger-wrap">
+      <div class="ledger" id="ledger">
+        <div class="ledger-head">
+          <span>This week's hisaab</span>
+          <span class="live">live calculation</span>
+        </div>
+        <div id="ledgerRows"></div>
+        <div class="ledger-foot">
+          <span>Zepto · Bengaluru · 40 hrs</span>
+          <span>min wage: <b>₹78.19/hr</b></span>
+        </div>
+      </div>
+      <div class="ledger-stub"></div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= PROBLEM ================= -->
+<section class="problem">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">The problem</div>
+      <h2>You're running a business. You just can't see the books.</h2>
+      <p>Riders on quick-commerce platforms operate blind — no visibility into real commission, real hourly rate, or where demand actually is right now.</p>
+    </div>
+    <div class="stat-grid reveal">
+      <div class="stat-cell">
+        <b>0/10</b>
+        <p>Fair Pay score for Zepto in the Fairwork India 2024 ratings — the lowest possible.</p>
+      </div>
+      <div class="stat-cell">
+        <b>18–26%</b>
+        <p>Commission range across Zepto, Blinkit and Instamart — before GST and TDS are even applied.</p>
+      </div>
+      <div class="stat-cell">
+        <b>23.5M</b>
+        <p>Projected gig workers in India by 2029–30, per NITI Aayog — and almost none with a real earnings dashboard.</p>
+      </div>
+    </div>
+    <div class="cite">Sources: Fairwork India Ratings 2024 (Oxford Internet Institute × IIIT-Bangalore), NITI Aayog "India's Booming Gig and Platform Economy" (2022)</div>
+  </div>
+</section>
+
+<!-- ================= FEATURE: CALCULATE ================= -->
+<section id="calculate">
+  <div class="wrap">
+    <div class="feature reveal">
+      <div class="feature-text">
+        <div class="feature-tag"><span class="dot" style="background:var(--green)"></span>Feature 01 — Calculate</div>
+        <h3>Know your real take-home, every single week.</h3>
+        <p>Enter your gross, orders and hours. Kamai runs the full deduction chain — platform commission, GST on commission, TDS, app fee — using formulas taken straight from CBDT and Income Tax Act rules, not guesswork.</p>
+        <ul class="feature-points">
+          <li><span class="ic">→</span>Every line filled from verified data — commission averages, GST, weekly app fee, TDS threshold — cited at the bottom of the screen</li>
+          <li><span class="ic">→</span>Shows fuel as your own cost, kept separate from platform deductions</li>
+          <li><span class="ic">→</span>Flags when TDS applies and calculates your refund estimate for ITR-1</li>
+        </ul>
+      </div>
+      <div class="feature-phone">
+        <div class="device">
+          <div class="device-glow" style="--glow:var(--zepto)"></div>
+          <div class="device-island"></div>
+          <div class="device-screen"><img src="images/calc-main.png" alt="Kamai tax calculator screen showing commission, GST and TDS breakdown filled from verified data" loading="lazy"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FEATURE: MAP ================= -->
+<section id="map">
+  <div class="wrap">
+    <div class="feature reverse reveal">
+      <div class="feature-text">
+        <div class="feature-tag"><span class="dot" style="background:var(--red)"></span>Feature 02 — Scarcity Map</div>
+        <h3>See which darkstore needs riders right now.</h3>
+        <p>Built on voluntary check-ins — the same principle Waze uses for traffic. One tap tells Kamai where you are. Hundreds of taps build a live scarcity map no platform will show you.</p>
+        <ul class="feature-points">
+          <li><span class="ic">→</span>Red, amber, green markers — sorted by real scarcity, not guesswork</li>
+          <li><span class="ic">→</span>Controlled release algorithm sends the alert only to as many riders as the gap needs, so nobody rushes the same store</li>
+          <li><span class="ic">→</span>Anonymous UUID only — never your name or number, check-in auto-expires in 10 minutes</li>
+        </ul>
+        <div class="feature-badge">🌧 Rain Surge — live weather pulled from Open-Meteo, matched against platform surge slabs</div>
+      </div>
+      <div class="feature-phone">
+        <div class="device">
+          <div class="device-glow" style="--glow:var(--red)"></div>
+          <div class="device-island"></div>
+          <div class="device-screen"><img src="images/map-main.png" alt="Kamai scarcity map screen showing live darkstore rider counts on a Bengaluru map with rain surge active" loading="lazy"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FEATURE: PLATFORMS ================= -->
+<section id="platforms">
+  <div class="wrap">
+    <div class="feature reveal">
+      <div class="feature-text">
+        <div class="feature-tag"><span class="dot" style="background:var(--amber)"></span>Feature 03 — Platform Comparison</div>
+        <h3>Which platform actually pays more for your hours?</h3>
+        <p>Kamai ranks Zepto, Blinkit and Instamart against your own weekly gross and the hours you actually work — not marketing claims — and tells you which one wins during your specific shifts.</p>
+        <ul class="feature-points">
+          <li><span class="ic">→</span>Pick your working slots — morning, afternoon, evening rush, late night — and Kamai finds the best platform for exactly that window</li>
+          <li><span class="ic">→</span>Fairwork 2024 scores and Fair Pay status shown with source, side by side</li>
+          <li><span class="ic">→</span>Surge patterns verified weekly against platform partner pages, not live-faked numbers</li>
+        </ul>
+      </div>
+      <div class="feature-phone">
+        <div class="device">
+          <div class="device-glow" style="--glow:var(--zepto)"></div>
+          <div class="device-island"></div>
+          <div class="device-screen"><img src="images/platforms-main.png" alt="Kamai platform comparison screen recommending Zepto as best for the rider's active shift slots" loading="lazy"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FEATURE: PROFILE / LOYALTY ================= -->
+<section id="profile">
+  <div class="wrap">
+    <div class="feature reverse reveal">
+      <div class="feature-text">
+        <div class="feature-tag"><span class="dot" style="background:var(--green)"></span>Feature 04 — Rider Profile</div>
+        <h3>Your own earnings history, building your case.</h3>
+        <p>Every week you log becomes proof. Kamai tracks per-order rate, per-hour rate, and which platform actually paid you the most — then puts a rupee number on what loyalty is costing you.</p>
+        <ul class="feature-points">
+          <li><span class="ic">→</span>"Left on table" — the loyalty penalty for not switching to your best-paying platform, recalculated every week</li>
+          <li><span class="ic">→</span>Annual tax summary formatted for ITR-1 filing, TDS refund estimate included</li>
+          <li><span class="ic">→</span>Your effective minimum-wage line, sourced from Karnataka Labour Dept, tracked against every week you log</li>
+        </ul>
+      </div>
+      <div class="feature-phone">
+        <div class="device">
+          <div class="device-glow" style="--glow:var(--amber)"></div>
+          <div class="device-island"></div>
+          <div class="device-screen"><img src="images/profile-main.png" alt="Kamai rider profile screen showing the loyalty penalty insight and weekly earnings entries" loading="lazy"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ALGORITHMS ================= -->
+<section class="algo-strip">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Under the hood</div>
+      <h2>Three original algorithms. No fabricated data.</h2>
+      <p>Kamai isn't a wrapper around a spreadsheet. Every screen is backed by logic built specifically for how quick-commerce delivery actually works.</p>
+    </div>
+    <div class="algo-grid reveal">
+      <div class="algo-card">
+        <div class="algo-num">01 / Scarcity Scoring</div>
+        <h4>Where is demand outrunning supply?</h4>
+        <p>Ranks every darkstore by how far its active rider count sits below a baseline coverage level.</p>
+        <div class="algo-code">score = max(0, 8 − activeRiders)
+HOT ≥ 5 · WARM ≥ 2 · else BALANCED</div>
+      </div>
+      <div class="algo-card">
+        <div class="algo-num">02 / Controlled Release</div>
+        <h4>Solves the "everyone rushes" problem.</h4>
+        <p>Uses KNN (K-Nearest Neighbors) to identify the most relevant riders so Only the nearest N riders needed to fill the gap get notified — never the whole city at once.</p>
+        <div class="algo-code">if score ≥ 3:
+  notify closest N riders
+  (N = score, radius 5km)</div>
+      </div>
+      <div class="algo-card">
+        <div class="algo-num">03 / Earnings Ranking</div>
+        <h4>Which platform is really worth your hours?</h4>
+        <p>Compares your own logged effective rate across platforms and surfaces what switching would be worth.</p>
+        <div class="algo-code">rate(P) = netAfterDeductions / hours
+loyaltyPenalty = (bestRate − yourRate) × hrs</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SCREENSHOT STRIP ================= -->
+<section id="app">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Inside the app</div>
+      <h2>Not a mockup. This is what's running right now.</h2>
+      <p>Kamai is mid-build in Bengaluru — every screen below is a real screen from the current dev build, not a design comp.</p>
+    </div>
+  </div>
+  <div class="screens-scroll reveal">
+    <div class="screens-track" id="screensTrack">
+      <div class="screen-card">
+        <div class="frame"><img src="images/image1.png" alt="Kamai login screen" loading="lazy"></div>
+        <div class="cap">Sign in</div>
+      </div>
+      <div class="screen-card">
+        <div class="frame"><img src="images/image2.png" alt="Kamai calculator input screen" loading="lazy"></div>
+        <div class="cap">Enter your week</div>
+      </div>
+      <div class="screen-card">
+        <div class="frame"><img src="images/image3.png" alt="Kamai scarcity map list view" loading="lazy"></div>
+        <div class="cap">Nearby darkstores</div>
+      </div>
+      <div class="screen-card">
+        <div class="frame"><img src="images/image4.png" alt="Kamai platform take-home comparison" loading="lazy"></div>
+        <div class="cap">Take-home compare</div>
+      </div>
+      <div class="screen-card">
+        <div class="frame"><img src="images/image5.png" alt="Kamai Fairwork score breakdown per platform" loading="lazy"></div>
+        <div class="cap">Fairwork scores</div>
+      </div>
+      <div class="screen-card">
+        <div class="frame"><img src="images/image6.png" alt="Kamai annual tax summary for ITR filing" loading="lazy"></div>
+        <div class="cap">ITR-1 ready summary</div>
+      </div>
+      <!-- duplicate set, seamless loop -->
+      <div class="screen-card" aria-hidden="true">
+        <div class="frame"><img src="images/image1.png" alt="" loading="lazy"></div>
+        <div class="cap">Sign in</div>
+      </div>
+      <div class="screen-card" aria-hidden="true">
+        <div class="frame"><img src="images/image2.png" alt="" loading="lazy"></div>
+        <div class="cap">Enter your week</div>
+      </div>
+      <div class="screen-card" aria-hidden="true">
+        <div class="frame"><img src="images/image3.png" alt="" loading="lazy"></div>
+        <div class="cap">Nearby darkstores</div>
+      </div>
+      <div class="screen-card" aria-hidden="true">
+        <div class="frame"><img src="images/image4.png" alt="" loading="lazy"></div>
+        <div class="cap">Take-home compare</div>
+      </div>
+      <div class="screen-card" aria-hidden="true">
+        <div class="frame"><img src="images/image5.png" alt="" loading="lazy"></div>
+        <div class="cap">Fairwork scores</div>
+      </div>
+      <div class="screen-card" aria-hidden="true">
+        <div class="frame"><img src="images/image6.png" alt="" loading="lazy"></div>
+        <div class="cap">ITR-1 ready summary</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PRIVACY ================= -->
+<section id="privacy">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Privacy</div>
+      <h2>Your earnings are yours. We built it that way on purpose.</h2>
+      <p>Kamai never touches a platform's systems and never sells rider data. Here's exactly what that means.</p>
+    </div>
+    <div class="privacy-grid reveal">
+      <div class="privacy-cell"><div class="num">01</div><p><b>Processed on your device first.</b> Your earnings data stays local unless you explicitly choose to sync it.</p></div>
+      <div class="privacy-cell"><div class="num">02</div><p><b>Never shared with any platform.</b> Not Zepto's, not Blinkit's, not Swiggy's — individual data stays with you.</p></div>
+      <div class="privacy-cell"><div class="num">03</div><p><b>Check-ins are one-tap and temporary.</b> No background tracking, ever. Auto-expires in 10 minutes.</p></div>
+      <div class="privacy-cell"><div class="num">04</div><p><b>Funded by ₹99/year Kamai Pro.</b> Not by selling rider data to anyone.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CTA ================= -->
+<section class="cta-section" id="access">
+  <div class="wrap cta-inner reveal">
+    <h2>The best do more. The best should keep more.</h2>
+    <p>Kamai is in early access, launching first in Indranagar &amp; RR Nagar, Bengaluru. Drop your number or email and we'll send you the app the moment it's ready.</p>
+    <form class="cta-form" id="accessForm">
+      <input type="text" id="accessContact" placeholder="WhatsApp number or email" required>
+      <button type="submit" class="btn-primary" style="border:none;cursor:pointer;">Notify me</button>
+    </form>
+    <div class="cta-note" id="accessNote">No spam. One message, when Kamai is live in your area.</div>
+    <div class="cta-error" id="accessError">Something went wrong — try again in a bit.</div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo"><span class="mark">₹</span>KAMAI</div>
+        <p>A financial intelligence app for Zepto, Blinkit and Swiggy Instamart delivery riders in India. Every number sourced. Every rider's data private.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <span>Product</span>
+          <a href="#calculate">Calculate</a>
+          <a href="#map">Scarcity Map</a>
+          <a href="#platforms">Platforms</a>
+          <a href="#profile">Rider Profile</a>
+          <a href="#privacy">Privacy</a>
+        </div>
+        <div class="footer-col">
+          <span>Sources</span>
+          <a href="https://fair.work/en/ratings/india/" target="_blank" rel="noopener">Fairwork India 2024</a>
+          <a href="https://www.niti.gov.in" target="_blank" rel="noopener">NITI Aayog 2022</a>
+        </div>
+        <div class="footer-col">
+          <span>Company</span>
+          <a href="#access">Get early access</a>
+          <a href="mailto:kishanbhat458@gmail.com">Contact Us</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Kamai. Built for the riders who never got a dashboard.</span>
+      <span>Bengaluru, India</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Supabase client — used only to record early-access signups -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+  // TODO: replace with your real Kamai Supabase project values (Settings → API)
+  const SUPABASE_URL = 'https://cudxwmishsbowbetjikl.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1ZHh3bWlzaHNib3diZXRqaWtsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzMTc4NTYsImV4cCI6MjA5Mzg5Mzg1Nn0.f0y0B6Q48z50U1DEtg5yxOV5c6L-xA0onPNelEwLRoQ';
+
+  let supabaseClient = null;
+  try {
+    if (window.supabase && SUPABASE_URL.startsWith('http')) {
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+  } catch (e) {
+    console.warn('Supabase client not initialised:', e);
+  }
+
+  const accessForm = document.getElementById('accessForm');
+  const accessContact = document.getElementById('accessContact');
+  const accessNote = document.getElementById('accessNote');
+  const accessError = document.getElementById('accessError');
+
+  accessForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = accessForm.querySelector('button');
+    const contact = accessContact.value.trim();
+    if (!contact) return;
+
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    accessError.style.display = 'none';
+
+    try {
+      if (!supabaseClient) throw new Error('Supabase not configured');
+
+      const { error } = await supabaseClient
+        .from('early_access_signups')
+        .insert([{ contact: contact }]);
+
+      if (error) throw error;
+
+      btn.textContent = "You're on the list ✓";
+      btn.style.background = 'var(--green-dim)';
+      accessContact.value = '';
+      accessNote.textContent = "Saved. We'll message you the moment Kamai is live in your area.";
+    } catch (err) {
+      console.error('Signup insert failed:', err);
+      btn.disabled = false;
+      btn.textContent = 'Notify me';
+      accessError.style.display = 'block';
+    }
+  });
+</script>
+
+<script>
+  // Ledger animation — the receipt-style hisaab breakdown in the hero
+  const ledgerData = [
+    {label:'Gross income', amount:'₹9,850', neg:false},
+    {label:'Commission (21%)', amount:'−₹2,069', neg:true},
+    {label:'GST on commission', amount:'−₹372', neg:true},
+    {label:'TDS (1%)', amount:'−₹99', neg:true},
+    {label:'App fee', amount:'−₹175', neg:true},
+    {label:'Fuel (your cost)', amount:'−₹723', neg:true},
+  ];
+  const totalLabel = 'True take-home';
+  const totalAmount = '₹6,412';
+
+  const ledgerRows = document.getElementById('ledgerRows');
+
+  function buildLedger(){
+    ledgerRows.innerHTML = '';
+    ledgerData.forEach((row) => {
+      const el = document.createElement('div');
+      el.className = 'ledger-row' + (row.neg ? ' neg' : '');
+      el.innerHTML = `<span>${row.label}</span><span class="amt">${row.amount}</span>`;
+      ledgerRows.appendChild(el);
+    });
+    const totalEl = document.createElement('div');
+    totalEl.className = 'ledger-row total';
+    totalEl.innerHTML = `<span>${totalLabel}</span><span class="amt">${totalAmount}</span>`;
+    ledgerRows.appendChild(totalEl);
+  }
+
+  function playLedger(){
+    const rows = ledgerRows.querySelectorAll('.ledger-row');
+    rows.forEach(r => r.classList.remove('show'));
+    rows.forEach((r, i) => {
+      setTimeout(() => r.classList.add('show'), 220 * i + 300);
+    });
+  }
+
+  buildLedger();
+  playLedger();
+  setInterval(playLedger, 8000);
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, {threshold: 0.12});
+  revealEls.forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
